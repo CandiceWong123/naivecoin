@@ -1,0 +1,31 @@
+class StudentAttendance:
+    def __init__(self):
+        self.attendance_records = []
+
+    def register_student(self, student_id, public_key):
+        student_info = {
+            'student_id': student_id,
+            'public_key': public_key,
+            'attendance': []
+        }
+        self.attendance_records.append(student_info)
+        print(f"Registered student: {student_id} with public key: {public_key}")
+
+    def record_attendance(self, student_id, event_id, timestamp):
+        attendance_record = {
+            'student_id': student_id,
+            'event_id': event_id,
+            'timestamp': timestamp
+        }
+        self.attendance_records.append(attendance_record)
+        print(f"Recorded attendance for student {student_id} for event {event_id} at {timestamp}")
+
+    def query_attendance(self, student_id):
+        records = [record for record in self.attendance_records if record['student_id'] == student_id]
+        print(f"Attendance records for student {student_id}: {json.dumps(records, indent=4)}")
+        return records
+
+    def save_to_json(self, filename):
+        with open(filename, 'w') as f:
+            json.dump(self.attendance_records, f, indent=4)
+        print(f"Attendance records saved to {filename}")
