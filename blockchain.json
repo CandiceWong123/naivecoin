@@ -1,0 +1,54 @@
+import json
+import time
+
+class Block:
+    def __init__(self, index, previous_hash, timestamp, data, nonce):
+        self.index = index
+        self.previous_hash = previous_hash
+        self.timestamp = timestamp
+        self.data = data
+        self.nonce = nonce
+
+    def to_dict(self):
+        return {
+            "index": self.index,
+            "previous_hash": self.previous_hash,
+            "timestamp": self.timestamp,
+            "data": self.data,
+            "nonce": self.nonce
+        }
+
+class Blockchain:
+    def __init__(self):
+        self.chain = []
+        self.difficulty = 2  # 初始难度
+        self.block_time = 10  # 目标时间（秒）
+
+    def add_block(self, data):
+        index = len(self.chain) + 1
+        previous_hash = self.chain[-1].previous_hash if self.chain else "0"
+        timestamp = int(time.time())
+        nonce = self.proof_of_work(index, previous_hash, timestamp, data)
+
+        new_block = Block(index, previous_hash, timestamp, data, nonce)
+        self.chain.append(new_block)
+
+        print(json.dumps(new_block.to_dict(), indent=4))  # 打印新块的 JSON 格式
+        self.adjust_difficulty()
+
+    def proof_of_work(self, index, previous_hash, timestamp, data):
+        nonce = 0
+        while not self.valid_proof(index, previous_hash, timestamp, data, nonce):
+            nonce += 1
+        return nonce
+
+    def valid_proof(self, index, previous_hash, timestamp, data, nonce):
+        guess = f"{index}{previous_hash}{timestamp}{data}{nonce}".encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:self.difficulty] == "0" * self.difficulty
+
+    def adjust_difficulty(self):
+        if len(self.chain) < 10:
+            return  # 不足10个区块时不调整
+        
+        # 这里可以添加调整难度的逻辑，省略细节
