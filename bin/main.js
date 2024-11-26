@@ -32,7 +32,7 @@ app.creatStudentWallet(studentId).then((loginValid) => {
 
 function commands() {
     app.getMenu();
-    command = prompt("Please input your command (0-4): ");
+    command = prompt("Please input your command (0-3): ");
     if (command == 0) {
         return;
     } else if (command == 1) {
@@ -52,9 +52,6 @@ function commands() {
             commands();
         });
     }else if (command == 3) {
-        // Function 4: Record query
-
-    }else if (command == 4) {
         // View wallet
         app.viewWallet().then(() => {
             commands();

@@ -36,6 +36,134 @@
                 }
             }
         },
+        "/blockchain/attendance": {
+            "get": {
+              "tags": [
+                "attendance"
+              ],
+              "summary": "Get all attendance records",
+              "description": "Retrieve a list of all attendance records stored on the blockchain.",
+              "responses": {
+                "200": {
+                  "description": "A list of attendance records",
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/AttendanceRecord"
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "tags": [
+                "attendance"
+              ],
+              "summary": "Add a new attendance record",
+              "description": "Submit a new attendance record (via transaction) to the blockchain.",
+              "parameters": [
+                {
+                  "in": "body",
+                  "name": "attendanceRecord",
+                  "description": "The attendance record to be added",
+                  "required": true,
+                  "schema": {
+                    "$ref": "#/definitions/AttendanceRecord"
+                  }
+                }
+              ],
+              "responses": {
+                "201": {
+                  "description": "Attendance record created successfully",
+                  "schema": {
+                    "$ref": "#/definitions/AttendanceRecord"
+                  }
+                }
+              }
+            }
+          },
+          "/blockchain/attendance/{transactionId}": {
+            "get": {
+              "tags": [
+                "attendance"
+              ],
+              "summary": "Get attendance record by transaction ID",
+              "description": "Retrieve a specific attendance record by its transaction ID.",
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "transactionId",
+                  "type": "string",
+                  "required": true,
+                  "description": "The transaction ID for the attendance record"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Attendance record found",
+                  "schema": {
+                    "$ref": "#/definitions/AttendanceRecord"
+                  }
+                },
+                "404": {
+                  "description": "Attendance record not found"
+                }
+              }
+            }
+          },
+          "/blockchain/fork": {
+      "post": {
+        "tags": [
+          "blockchain"
+        ],
+        "summary": "Handle blockchain fork resolution",
+        "description": "This endpoint is used to resolve a blockchain fork by checking a competing chain and switching to the longer chain if necessary.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "competingChain",
+            "description": "The competing blockchain to check and resolve the fork.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "blocks": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Block"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fork resolution complete",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Fork check complete"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid competing chain data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Invalid chain data"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
         "/blockchain/blocks/{index}": {
             "get": {
                 "tags": [

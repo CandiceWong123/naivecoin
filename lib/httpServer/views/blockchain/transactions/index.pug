@@ -25,8 +25,8 @@ block content
                                 span.tooltip #{formatters.hash(transaction.hash)}
                                     span.tooltiptext #{transaction.hash}
                             td #{transaction.type}
-                            td #{transaction.data.inputs.length}
-                            td #{transaction.data.outputs.length}                            
+                            td #{transaction.data.inputs ? transaction.data.inputs.length : 0}  // 如果 inputs 未定义，则显示 0
+                            td #{transaction.data.outputs ? transaction.data.outputs.length : 0}  // 如果 outputs 未定义，则显示 0                          
                         tr(id=`${transaction.id}`, style="display: none;")
                             td(colspan=5)
                                 .content
