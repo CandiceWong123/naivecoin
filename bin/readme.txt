@@ -1,17 +1,41 @@
-1. For user 1, run a node in terminal:
-node bin/naivecoin.js -p 7001 --name 33
+1. Run a node:
+For user 1:
+node bin/naivecoin.js -p 3001 --name a
 
-2. For user 2, run the second node and add peers:
-node bin/naivecoin.js -p 7002 --name 44 --peers http://localhost:7001
+For user 2 (peers):
+node bin/naivecoin.js -p 3002 --name b --peers http://localhost:3001
 
-3. For each user, open a new terminal. Run the below command to start the app (), e.g.:
-node bin/main.js -p 7001 -n 33
-node bin/main.js -p 3002 -n 2
+Swagger API:
+http://localhost:3001/api-docs/
 
 
-4. Record query
+2. Student Registration (start the application with the below command)
+node bin/main.js -p 3001 -n a
+node bin/main.js -p 3002 -n b
+
+A wallet will be generated. 
+Information will be crafted into a Trasaction (type:"registration") and mined into blockchain.
+
+
+3. Attendance Record
+In the app, choose to implement the "1. Create attendance" and input the Course Id.
+For signing the attendance certificate, input your corret secret key.
+Attendance information containing signature will be crafted into a Trasaction (type:"attendance").
+Signature will be verified by the app and then be written into ./data/transactions DB.
+
+
+4. Mining
+In the app, choose to implement the "2. Mine attendance".
+If there has been attendance stored in the ./data/transactions DB,
+it should be mined and available to be found in self/peer's blockchain.
+
+
+5. Record query
+Open the Swagger API, find out the section "attendance" -> "POST /blockchain/attendance":
+For testing, we directly post a transaction (the below example) and it will be written into ./data/transactions DB.
+
 {
-  "id": "95bbb4d616d599a06bcac03db53d7dceaf5ee0082f571a9684e64bb7a7b77983",
+  "id": "95bbb4d616d599a06bcac03db53d7dceaf5ee0082f571a9684e64bb7a7b88888",
   "hash": "fbfa6893ff3b7e3c47e3793aa7af2a4b3c2bd1130090a53d27c07cecc10a2e01",
   "type": "attendance",
   "data": {
@@ -29,5 +53,61 @@ node bin/main.js -p 3002 -n 2
   }
 }
 
+To get the record, find out the section "attendance" -> "GET /blockchain/attendance/{transactionId}":
+Paste the transactionId and the server should response the corresponding record.
+
+
+6. Forking handling
+Open the Swagger API, find out the section "blockchain" -> "POST /blockchain/fork". 
+Suppose there are two blocks forked from the same previous block. 
+The program should replace the blockchain after the comparision with forks. 
+And return HTTP status code 200 to show there is no fork now. 
+
+{
+  "blocks": [
+    {
+      "index": 0,
+      "previousHash": "genesis-hash",
+      "timestamp": 1615289712031,
+      "data": "Genesis Block",
+      "hash": "genesis-hash"
+    },
+    {
+      "index": 1,
+      "previousHash": "genesis-hash",
+      "timestamp": 1615289712032,
+      "data": "Block 1 Data",
+      "hash": "block1-hash"
+    },
+    {
+      "index": 2,
+      "previousHash": "block1-hash",
+      "timestamp": 1615289712033,
+      "data": "Block 2 Data (Competing)",
+      "hash": "block2-competing-hash"
+    }
+  ]
+}
+
+In the situation that the block contains invalid previous hash, it will return HTTP status code 500.
+
+{
+  "blocks": [
+    {
+      "index": 0,
+      "previousHash": "genesis-hash",
+      "timestamp": 1615289712031,
+      "data": "Genesis Block",
+      "hash": "genesis-hash"
+    },
+    {
+      "index": 1,
+      "previousHash": "invalid-hash",  // Invalid previous hash value
+      "timestamp": 1615289712032,
+      "data": "Block 1 Data",
+      "hash": "block1-hash"
+    }
+  ]
+}
 
 

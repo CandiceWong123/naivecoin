@@ -21,7 +21,6 @@ let command = null;
 
 // Function 1: Student information registration
 let studentId = prompt("Please input your student ID:");
-// let studentId = "20063043d";
 app.creatStudentWallet(studentId).then((loginValid) => {
     if(loginValid == true){
         commands();
